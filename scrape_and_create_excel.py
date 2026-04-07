@@ -283,11 +283,12 @@ left_indent  = Alignment(horizontal="left", vertical="center", wrap_text=True, i
 ws.column_dimensions["A"].width = 10   # Step #
 ws.column_dimensions["B"].width = 60   # Module / Sub-topic Name
 ws.column_dimensions["C"].width = 18   # Total Problems
-ws.column_dimensions["D"].width = 14   # Status (✓)
-ws.column_dimensions["E"].width = 18   # Notes
+ws.column_dimensions["D"].width = 14   # Progress
+ws.column_dimensions["E"].width = 14   # Status (✓)
+ws.column_dimensions["F"].width = 18   # Notes
 
 # ── Title Row ──
-ws.merge_cells("A1:E1")
+ws.merge_cells("A1:F1")
 title_cell = ws["A1"]
 title_cell.value = "📚 Striver's A2Z DSA Course - Progress Tracker"
 title_cell.font = title_font
@@ -296,7 +297,7 @@ title_cell.alignment = Alignment(horizontal="center", vertical="center")
 ws.row_dimensions[1].height = 50
 
 # ── Subtitle Row ──
-ws.merge_cells("A2:E2")
+ws.merge_cells("A2:F2")
 sub_cell = ws["A2"]
 sub_cell.value = "Source: takeuforward.org/dsa/strivers-a2z-sheet-learn-dsa-a-to-z  |  Total: 455 Problems across 18 Steps"
 sub_cell.font = Font(name="Calibri", size=10, italic=True, color=LIGHT_GRAY)
@@ -305,12 +306,12 @@ sub_cell.alignment = Alignment(horizontal="center", vertical="center")
 ws.row_dimensions[2].height = 28
 
 # ── Empty separator ──
-for col in range(1, 6):
+for col in range(1, 7):
     ws.cell(row=3, column=col).fill = dark_fill
 ws.row_dimensions[3].height = 8
 
 # ── Header Row ──
-headers = ["Step", "Topic / Sub-topic", "Problems", "Done ✓", "Notes"]
+headers = ["Step", "Topic / Sub-topic", "Problems", "Progress 📊", "Done ✓", "Notes"]
 for col_idx, header in enumerate(headers, 1):
     cell = ws.cell(row=4, column=col_idx, value=header)
     cell.font = header_font
@@ -345,7 +346,7 @@ for mod in modules:
     total_cell.alignment = center_align
     total_cell.border = thin_border
     
-    for col in [4, 5]:
+    for col in [4, 5, 6]:
         cell = ws.cell(row=current_row, column=col)
         cell.fill = module_fill
         cell.border = thin_border
@@ -379,15 +380,22 @@ for mod in modules:
         sub_count_cell.alignment = center_align
         sub_count_cell.border = thin_border
         
+        # Progress tracking (empty, user fills in with ✓)
+        progress_cell = ws.cell(row=current_row, column=4, value="")
+        progress_cell.font = Font(name="Calibri", size=14, color=GREEN)
+        progress_cell.fill = fill
+        progress_cell.alignment = center_align
+        progress_cell.border = thin_border
+        
         # Done checkbox (empty, user fills in)
-        done_cell = ws.cell(row=current_row, column=4, value="☐")
+        done_cell = ws.cell(row=current_row, column=5, value="☐")
         done_cell.font = Font(name="Calibri", size=14, color=LIGHT_GRAY)
         done_cell.fill = fill
         done_cell.alignment = center_align
         done_cell.border = thin_border
         
         # Notes (empty)
-        notes_cell = ws.cell(row=current_row, column=5)
+        notes_cell = ws.cell(row=current_row, column=6)
         notes_cell.fill = fill
         notes_cell.border = thin_border
         
@@ -395,7 +403,7 @@ for mod in modules:
     
     # Separator row after each module
     ws.row_dimensions[current_row].height = 4
-    for col in range(1, 6):
+    for col in range(1, 7):
         cell = ws.cell(row=current_row, column=col)
         cell.fill = dark_fill
         cell.border = Border()
@@ -403,7 +411,7 @@ for mod in modules:
 
 # ── Summary Footer ──
 current_row += 1
-ws.merge_cells(f"A{current_row}:E{current_row}")
+ws.merge_cells(f"A{current_row}:F{current_row}")
 summary_cell = ws.cell(row=current_row, column=1)
 summary_cell.value = f"🎯 Total: {total_problems} Problems  |  18 Steps  |  {sum(len(m['subtopics']) for m in modules)} Sub-topics"
 summary_cell.font = Font(name="Calibri", size=14, bold=True, color=GOLD)
